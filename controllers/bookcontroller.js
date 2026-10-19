@@ -1,6 +1,6 @@
 import Book from "../models/book.models.js";
 
-export const getBooks = async (req, res, next) => {
+export const getAllBooks = async (req, res, next) => {
   try {
     const books = await Book.find({ 
         active: true }).populate("author", "name");
