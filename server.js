@@ -4,7 +4,7 @@ import { dbConnection } from "./database/config.js";
 
 // import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
-
+import  bookRouter from "./routes/book.routes.js"
 
 
 class Server {
@@ -25,6 +25,8 @@ class Server {
 
 
     routes() {
+        this.app.use("/api/books", bookRouter)
+
 
     }
 
