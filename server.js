@@ -32,7 +32,10 @@ class Server {
 
          
     async conectionDB (){
-        await dbConnection ()
+        await dbConnection ();
+    //       this.app.listen(this.port, () => {
+    //     console.log(`Servidor corriendo en puerto ${this.port}`);
+    // });
     }
     
     
