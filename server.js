@@ -6,21 +6,27 @@ import { logger } from "./middlewares/loggers.js";
 import { notFound, errorHandler } from "./middlewares/errores.js";
 import authRouter from "./routes/authRouter.js";
 import authorsRouter from "./routes/authorsRouter.js";
-import bookRouter from "./routes/bookRoutes.js";
-import loanRoutes from "./routes/loanRoutes.js";
+import bookRouter from "./routes/bookRouter.js";
+import loanRouter from "./routes/loanRouter.js";
 
 class Server {
   constructor() {
     this.app = express();
     this.port = process.env.PORT;
+    
+    this.conectarBaseDatos();
     this.middlewares();
     this.routes();
     this.errores();
   }
 
+  async conectarBaseDatos() {
+    await dbConnection();
+  }
+
   middlewares() {
+    this.app.use(express.json());    //
     this.app.use(cors());
-    this.app.use(express.json());
     this.app.use(logger);
   }
 
@@ -28,7 +34,7 @@ class Server {
     this.app.use("/api/auth", authRouter);
     this.app.use("/api/authors", authorsRouter);
     this.app.use("/api/books", bookRouter);
-    this.app.use("/api/loans", loanRoutes);
+    this.app.use("/api/loans", loanRouter);
   }
 
   errores() {
@@ -36,10 +42,9 @@ class Server {
     this.app.use(errorHandler);
   }
 
-  async listen() {
-    await dbConnection();
+  listen() {
     this.app.listen(this.port, () => {
-      console.log("Escuchando en el puerto " + this.port);
+      console.log("Servidor corriendo en puerto " + this.port);
     });
   }
 }

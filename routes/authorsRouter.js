@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { createAuthor, deleteAuthor, getAuthorById, listAuthors, updateAuthor } from "../controllers/authorController.js";
+import { validarCampos,} from "../middlewares/validarCampos.js";
+import { active, authorId, birthYear, name, nationality } from "../validators/authorsValidators.js";
 // import { authorId, name, nationality, birthYear, active } from "../validators/authorsValidators.js";
-import { validarCampos,  } from "../middlewares/validarCampos.js";
-import { active, authorId, birthYear, name, nationality } from "../validators/authorsValidator.js";
 
 const router = Router()
 
@@ -15,4 +15,4 @@ router.delete("/:id", [authorId, validarCampos], deleteAuthor)
 
 
 
-export default router 
+export default router  

@@ -28,4 +28,4 @@ const authorSchema = new Schema ({
     versionKey: false
 });
 
-export default model("Author", authorSchema);
+export default model("Authors", authorSchema);

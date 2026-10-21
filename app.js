@@ -1,6 +1,8 @@
-import Server from "./server.js";
+import dotenv from 'dotenv';
+import Server from './server.js';
 
-// const server = new Server();
-// server.listen();
+dotenv.config();
 
-new Server().listen()
+const server = new Server();
+
+server.listen();
