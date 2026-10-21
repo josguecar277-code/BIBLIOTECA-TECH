@@ -6,6 +6,7 @@ import { logger } from "./middlewares/loggers.js";
 import { notFound, errorHandler } from "./middlewares/errores.js";
 import authRouter from "./routes/authRouter.js";
 import authorsRouter from "./routes/authorsRouter.js";
+import usersRouter from "./routes/usersRouter.js";
 import bookRouter from "./routes/bookRoutes.js";
 import loanRoutes from "./routes/loanRoutes.js";
 
@@ -27,6 +28,7 @@ class Server {
   routes() {
     this.app.use("/api/auth", authRouter);
     this.app.use("/api/authors", authorsRouter);
+    this.app.use("/api/users", usersRouter);
     this.app.use("/api/books", bookRouter);
     this.app.use("/api/loans", loanRoutes);
   }

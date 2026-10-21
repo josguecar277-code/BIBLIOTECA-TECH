@@ -1,17 +1,18 @@
 import { Router } from "express";
-import { createAuthor, deleteAuthor, getAuthorById, listAuthors, updateAuthor } from "../controllers/authorController.js";
-// import { authorId, name, nationality, birthYear, active } from "../validators/authorsValidators.js";
-import { validarCampos,  } from "../middlewares/validarCampos.js";
+import { validateJWT } from "../middlewares/validateJWT.js";
+import { tieneRol } from "../middlewares/validateRoles.js";
+import { validateFields } from "../middlewares/validateFields.js";
+import { createAuthor, deleteAuthor, getAuthorById, listAuthors, updateAuthor } from "../controllers/authorsController.js";
 import { active, authorId, birthYear, name, nationality } from "../validators/authorsValidator.js";
 
 const router = Router()
 
 
 router.get("/", listAuthors)
-router.post("/", [name, nationality, birthYear, active, validarCampos], createAuthor)
-router.get("/:id", [authorId, validarCampos], getAuthorById)
-router.put("/:id", [authorId, nationality, birthYear, active, validarCampos], updateAuthor)
-router.delete("/:id", [authorId, validarCampos], deleteAuthor)
+router.post("/", [validateJWT, tieneRol('ADMIN'), name, nationality, birthYear, active, validateFields], createAuthor)
+router.get("/:id", [authorId, validateFields], getAuthorById)
+router.put("/:id", [validateJWT, tieneRol('ADMIN'), authorId, nationality, birthYear, active, validateFields], updateAuthor)
+router.delete("/:id", [validateJWT, tieneRol('ADMIN'), authorId, validateFields], deleteAuthor)
 
 
 

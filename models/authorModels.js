@@ -14,9 +14,12 @@ const authorSchema = new Schema ({
         type: Number,
         required: false,
         validate: {
-            validator: value => value => new Date().getFullYear,
-            message: 'El año de nacimiento no puede ser mayor que el año actual.',
-        },    
+            validator: function(value) {
+                if (value === undefined || value === null) return true;
+                return Number.isInteger(value) && value >= 0 && value <= new Date().getFullYear();
+            },
+            message: props => `${props.value} debe ser un entero entre 0 y el año actual`
+        }    
     },
         active: {
         type: Boolean,
@@ -28,4 +31,4 @@ const authorSchema = new Schema ({
     versionKey: false
 });
 
-export default model("Author", authorSchema);
+export default model("Authors", authorSchema);
