@@ -10,6 +10,5 @@ export const dbConnection = async () => {
     }
 };
 
-// const mongoose = require('mongoose');
 
 
