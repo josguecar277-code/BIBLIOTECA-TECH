@@ -13,7 +13,7 @@ export const createLoan = async (req, res, next) => {
          msg: "Libro no encontrado"
          });
     }
-
+ 
     // R3:
     const repetido = await Loan.findOne({ user: userId, book: bookId, status: "ACTIVE" });
     if (repetido) {

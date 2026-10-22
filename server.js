@@ -14,10 +14,10 @@ class Server {
     this.app = express();
     this.port = process.env.PORT;
     
-    this.conectarBaseDatos();
     this.middlewares();
     this.routes();
     this.errores();
+    // this.conectarBaseDatos();
   }
 
   async conectarBaseDatos() {

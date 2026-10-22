@@ -1,5 +1,6 @@
-import { request } from "express";
+// import { request } from "express";
 import Authors from "../models/authorModels.js";
+import Book from "../models/bookModels.js";
 
 export const listAuthors = async (req, res, next) => {
     try {
@@ -8,7 +9,7 @@ export const listAuthors = async (req, res, next) => {
 
         res.status(200).json({
             ok: true,
-            author  
+            data:author  
         }) 
 
     } catch (error) {
@@ -18,63 +19,56 @@ export const listAuthors = async (req, res, next) => {
 
 export const createAuthor = async (req, res, next) => {
     try {
-        
-        const nuevo = await Authors.create(req.body)
+        const nuevoAutor = await Authors.create(req.body);
 
-        console.log(nuevo)
-
-        res.status(200).json({
-            msg: (nuevo),
+        res.status(201).json({
             ok: true,
-            Authors
-        }) 
+            data: nuevoAutor
+        }); 
 
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 export const getAuthorById = async (req, res, next) => {
     try {
-        
-        const author = await Authors.findById(req.params.id)
+        const author = await Authors.findById(req.params.id);
 
-        if(!author) {
-            res.status(404).json({
+        if (!author) {
+            return res.status(404).json({
                 ok: false,
                 msg: "Autor no encontrado"
-            })
-            return
+            });
         }
 
         res.status(200).json({
-            msg: (author),
             ok: true,
-            Authors
-        }) 
+            data: author
+        }); 
 
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 export const updateAuthor = async (req, res, next) => {
     try {
         
-        const author = await Authors.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const author = await Authors.findByIdAndUpdate(req.params.id, req.body, { new: true }); //
 
         if(!author) {
-            res.status(404).json({
+          return  res.status(404).json({
                 ok: false,
                 msg: "Autor no encontrado"
             })
-            return
+            
         }
 
         res.status(200).json({
             msg: (author),
             ok: true,
-            Authors
+            data: author //
         }) 
 
     } catch (error) {
@@ -85,20 +79,20 @@ export const updateAuthor = async (req, res, next) => {
 export const deleteAuthor = async (req, res, next) => {
     try {
         
-        const author = await Authors.findByIdAndDelete(req.params.id);
+        const author = await Authors.findByIdAndUpdate(req.params.id);
 
         if(!author) {
-            res.status(404).json({
+           return res.status(404).json({
                 ok: false,
                 msg: "Autor no encontrado"
             })
-            return
+            
         }
 
         res.status(200).json({
-            msg: ("Autor eliminado correctamente"),
             ok: true,
-            Authors
+            msg: ("Autor desactivado correctamente"),
+            // Authors
         }) 
 
     } catch (error) {

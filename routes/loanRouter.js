@@ -6,9 +6,9 @@ import { tieneRol } from "../middlewares/validateRoles.js";
 
 const router = Router();
 
-router.post("/", validateJWT, validarCrearPrestamo, createLoan);
 router.get("/me", validateJWT, getMyLoans);
 router.get("/overdue", validateJWT, tieneRol("ADMIN"), getOverdueLoans);
+router.post("/", validateJWT, validarCrearPrestamo, createLoan);
 router.get("/", validateJWT, tieneRol("ADMIN"), validarFiltroEstado, getLoans);
 router.patch("/:id/return", validateJWT, validarDevolucion, returnLoan);
 

@@ -6,9 +6,9 @@ import { tieneRol } from "../middlewares/validateRoles.js";
 
 const router = Router();
 
-router.get("/", getAllBooks);
 router.get("/available", availableBooks);
 router.get("/:id", validarId, getBook);
+router.get("/", getAllBooks);
 router.post("/",  validarCrearLibro, createBook);
 router.put("/:id", validateJWT, tieneRol("ADMIN"), validarActualizarLibro, updateBook);
 router.delete("/:id", validateJWT, tieneRol("ADMIN"), validarId, deletebook);
