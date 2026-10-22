@@ -1,45 +1,39 @@
 import { request } from "express";
-import bcrypt from "bcryptjs";      
 import Users from "../models/userModels.js";
-import { generarJWT } from '../helpers/generar-jwt.js';   
+import bcrypt from "bcryptjs";
+import { generarJWT } from '../helpers/generar-jwt.js';
 
-export const listUsers = async (req, res, next) => {
-    try {
-        
-        const user = await Users.find()
 
-        res.status(200).json({
-            ok: true,
-            user
-        }) 
+export const register = async (req, res, next) => {
+  try {
+    const { name, email, password } = req.body;
 
-    } catch (error) {
-        next(error)
+    const existeUsuario = await Users.findOne({ email });
+    if (existeUsuario) {
+      return res.status(400).json({ ok: false, msg: 'El correo electrónico ya se encuentra registrado' });
     }
-}
 
-export const createUser = async (req, res, next) => {
-    try {
-        const { name, email, password } = req.body       
-        const nuevo = await Users.create({ name, email, password })
-        const token = await generarJWT(nuevo._id)           
 
-        console.log(nuevo)
+    const nuevoUsuario = new Users({ name, email, password });
+    await nuevoUsuario.save();
 
-        res.status(201).json({                       
-            user: nuevo,
-            token
-        })
+    const token = await generarJWT(nuevoUsuario._id);
 
-    } catch (error) {
-        next(error)
-    }
-}
-export const login = async (req, res) => {
+    return res.status(201).json({
+      ok: true,
+      data: { user: nuevoUsuario, token }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
-        const user = await Users.findOne({ email });
+        const user = await Users.findOne({ email, active: true });
         if (!usuario) {
             return res.status(401).json({ ok: false, msg: 'Credenciales inválidas' });
         }
@@ -56,8 +50,7 @@ export const login = async (req, res) => {
 
         return res.status(200).json({
             ok: true,
-            user: user,
-            token
+            data: { user: user, token}
         });
     } catch (error) {
         return res.status(500).json({ 
@@ -65,11 +58,71 @@ export const login = async (req, res) => {
             msg: 'Error en el servidor'
         });
     }
-    
 }
-export const me = (req, res) => {  
-      res.status(200).json({ ok: true, user: req.user })
-}
+
+export const getMe = async (req, res, next) => {
+  try {
+    return res.status(200).json({
+      ok: true,
+      data: req.user
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUsers = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const usuarios = await Users.find({ active: true })
+    .skip(skip)
+    .limit(limit);
+
+    const total = await Users.countDocuments({ active: true });
+
+    return res.status(200).json({
+      ok: true,
+      data: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        users: usuarios
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateRole = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    const usuarioActualizado = await Users.findByIdAndUpdate(
+      id,
+      { role },
+      { returnDocument: "after", runValidators: true } 
+    );
+
+    if (!usuarioActualizado) {
+      return res.status(404).json({ ok: false, msg: 'Usuario no encontrado' });
+    }
+
+    return res.status(200).json({
+      ok: true,
+      msg: 'Rol actualizado con éxito',
+      data: usuarioActualizado
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
  
