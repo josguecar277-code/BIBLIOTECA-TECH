@@ -1,5 +1,5 @@
 import { check } from "express-validator";
-import { existeAuthorPorId } from "../helpers/db-validators.js";
+import { existeAutorPorId } from "../helpers/db-validators.js";
 
 
 const name = check("name", "El nombre es obligatorio")
@@ -41,7 +41,7 @@ const active = check("active")
 const authorId = check("id", "El id no es válido")
 .notEmpty().withMessage("El id es obligatorio")
 .isMongoId().withMessage("El id debe ser un id de mongo válido")
-.custom(existeAuthorPorId);
+.custom(existeAutorPorId);
 
 
 export  {

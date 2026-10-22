@@ -12,7 +12,7 @@ export const validateJWT = async (req, res, next) => {
     }
 
     try {
-        const { id } = jwt.verify(token, process.env.JWT_SECRET || 'FirmaSecretaSuperSegura');
+        const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
         const user = await User.findById(id);
 

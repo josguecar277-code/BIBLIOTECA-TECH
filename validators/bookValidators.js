@@ -1,12 +1,12 @@
 import { check } from "express-validator";
-import { validarCampos } from "../middlewares/validarCampos.js";
+import { validateFields} from "../middlewares/validateFields.js";
 import { isbnExiste, existeAutorPorId } from "../helpers/db-validators.js";
 
 const generos = ["novela", "cuento", "poesia", "ensayo", "tecnologia", "historia", "infantil"];
 
 export const validarId = [
   check("id", "El id no es válido").isMongoId(),
-  validarCampos,
+  validateFields,
 ];
 
 export const validarCrearLibro = [
@@ -18,7 +18,7 @@ export const validarCrearLibro = [
   check("genre", "Genero no valido").optional().isIn(generos),
   check("year", "Año no válido").optional().isInt({ max: new Date().getFullYear() }),
   check("totalCopies", "Debe ser un entero mayor o igual a 1").isInt({min: 1}),
-  validarCampos,
+  validateFields,
 ];
 
 export const validarActualizarLibro = [
@@ -31,5 +31,5 @@ export const validarActualizarLibro = [
   check("genre", "Genero no valido").optional().isIn(generos),
   check("year", "Año no válido").optional().isInt({ max: new Date().getFullYear() }),
   check("totalCopies", "Debe ser un entero mayor o igual a 1").isInt({min: 1}),
-  validarCampos,
+  validateFields,
 ];

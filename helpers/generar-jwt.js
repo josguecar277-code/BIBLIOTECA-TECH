@@ -6,7 +6,7 @@ export const generarJWT = (id) => {
 
         jwt.sign(
             payload,
-            process.env.JWT_SECRET || 'FirmaSecretaSuperSegura',
+            process.env.JWT_SECRET,
             {
                 expiresIn: '4h',
             },
