@@ -12,7 +12,7 @@ export const validarId = [
 export const validarCrearLibro = [
   check("title", "El título es obligatorio").notEmpty().isLength({ max: 120 }),
   check("isbn", "El ISBN debe tener 10 o 13 dígitos").matches(/^(\d{10}|\d{13})$/),
-  check("isbn").custom(isbnExiste),
+  check("isbn").custom((isbn) => isbnExiste(isbn)),
   check("author", "El autor no es válido").isMongoId(),
   check("author").custom(existeAutorPorId),
   check("genre", "Genero no valido").optional().isIn(generos),

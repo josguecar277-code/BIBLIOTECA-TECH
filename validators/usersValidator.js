@@ -1,16 +1,18 @@
 import { check } from "express-validator";
-
+import Users from "../models/userModels.js";
 
 export const registerValidators = [
   check("name", "El nombre es obligatorio y debe tener entre 3 y 60 caracteres")
     .trim()
     .notEmpty()
     .isLength({ min: 3, max: 60 }),
-  
-  check("email", "Por favor introduce un correo con formato válido")
-    .trim()
-    .isEmail()
-    .normalizeEmail(),
+    
+  //r9 el email es único, se valida con .custom()
+
+ check("email").custom(async (email) => {
+  const existe = await Users.findOne({ email: String(email).toLowerCase() });
+  if (existe) throw new Error("El correo ya está registrado");
+}),
   
   check("password", "La contraseña es obligatoria y debe contener mínimo 6 caracteres")
     .isLength({ min: 6 })

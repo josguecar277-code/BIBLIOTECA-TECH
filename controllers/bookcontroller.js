@@ -1,4 +1,5 @@
 import Book from "../models/bookModels.js";
+import Loan from "../models/loanModels.js";
 
 export const getAllBooks = async (req, res, next) => {
   try {
@@ -71,19 +72,32 @@ export const updateBook = async (req, res, next) => {
     const id = req.params.id;
     const { title, isbn, author, genre, year, totalCopies } = req.body;
 
+    const actual = await Book.findById(id);
+    if (!actual) {
+      return res.status(404).json({
+         ok: false,
+         msg: "Libro no encontrado" });
+    }
+
+    // R5: totalCopies no puede ser menor a las copias prestadas //
+    const prestadas = actual.totalCopies - actual.availableCopies;
+    if (totalCopies < prestadas) {
+      return res.status(400).json({
+        ok: false,
+        msg: "totalCopies no puede ser menor a las copias prestadas" });
+    }
+
+    const cambios = { title, isbn, author, genre, year, totalCopies, availableCopies: totalCopies - prestadas };
+    for (const k of Object.keys(cambios)) if (cambios[k] === undefined) delete cambios[k];
+
     const book = await Book.findByIdAndUpdate(
       id,
-      { title, isbn, author, genre, year, totalCopies },
+      cambios,
       { returnDocument: "after", runValidators: true }
     );
 
-    if (!book) {
-      return res.status(404).json({
-         ok: false, 
-         msg: "Libro no encontrado" });
-    }
     res.status(200).json({
-         ok: true, 
+         ok: true,
          data: book });
   } catch (error) {
     next(error);
@@ -93,6 +107,14 @@ export const updateBook = async (req, res, next) => {
 export const deletebook = async (req, res, next) => {
   try {
     const id = req.params.id;
+
+    const prestamos = await Loan.countDocuments({ book: id, status: "ACTIVE" });
+    if (prestamos > 0) {
+      return res.status(409).json({
+        ok: false,
+        msg: "El libro tiene préstamos activos" });
+        
+    }
     const book = await Book.findByIdAndUpdate(
       id,
       { active: false },

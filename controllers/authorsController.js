@@ -1,5 +1,6 @@
-import { request } from "express";
+
 import Authors from "../models/authorModels.js";
+import Books from "../models/bookModels.js";
 
 export const listAuthors = async (req, res, next) => {
     try {
@@ -24,7 +25,7 @@ export const createAuthor = async (req, res, next) => {
         console.log(nuevo)
 
 
-        res.status(200).json({
+        res.status(201).json({
             msg: (nuevo),
             ok: true,
             data: nuevo
@@ -39,6 +40,7 @@ export const getAuthorById = async (req, res, next) => {
     try {
         
         const author = await Authors.findById(req.params.id)
+        const { id } = req.params;
 
         if(!author) {
             res.status(404).json({
@@ -47,14 +49,13 @@ export const getAuthorById = async (req, res, next) => {
             })
             return
         }
-
-        // const books = await Books.find({ author: id, active: true });
+                // un autor y la lista de sus libros
+        const books = await Books.find({ author: id, active: true });
 
         res.status(200).json({
-            msg: (author),
+            // msg: (author),
             ok: true,
-            Authors
-            // data: { author, books: libros }
+            data: { author, books }
         }) 
 
     } catch (error) {
@@ -89,26 +90,29 @@ export const updateAuthor = async (req, res, next) => {
 export const deleteAuthor = async (req, res, next) => {
     try {
         
-        const author = await Authors.findByIdAndDelete(req.params.id, { active: false, returnDocument: "after"});
-        
-        // const tieneLibrosActivos = await mongoose.model('Book').findOne({ author: id, active: true });
-        //     if (tieneLibrosActivos) {
-        //     return res.status(409).json({ 
-        //         ok: false, 
-        //         msg: 'No se puede eliminar el autor porque tiene libros activos asignados' 
-        //         });
-        //     }
+        const libros = await Book.countDocuments({ author: id, active: true })
+        if (libros > 0) {
+            return res.status(409).json({
+                ok: false,
+                msg: "El autor tiene libros activos"
+            })
+        }
+
+        // borrado lógico
+        const author = await Authors.findByIdAndUpdate(
+            id,
+            { active: false },
+            { returnDocument: "after" }
+        );
 
         if(!author) {
-            res.status(404).json({
+            return res.status(404).json({
                 ok: false,
                 msg: "Autor no encontrado"
             })
-            return
         }
 
         res.status(200).json({
-            msg: ("Autor eliminado correctamente"),
             ok: true,
             data: author
         }) 

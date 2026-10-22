@@ -10,7 +10,7 @@ const authorSchema = new Schema ({
         type: String,
         required: false,
     },
-    birthYear: {
+    birthYear: { 
         type: Number,
         required: false,
         validate: {
@@ -31,4 +31,4 @@ const authorSchema = new Schema ({
     versionKey: false
 });
 
-export default model("Authors", authorSchema);
+export default model("Author", authorSchema); //s
